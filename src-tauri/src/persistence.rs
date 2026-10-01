@@ -1,8 +1,8 @@
+use crate::domain::{AppError, SyndicateState};
 use std::collections::HashMap;
 use std::path::Path;
-use tokio::fs;
-use crate::domain::{SyndicateState, AppError};
 use std::sync::OnceLock;
+use tokio::fs;
 use tokio::sync::Mutex;
 
 static FILE_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
@@ -11,7 +11,9 @@ fn get_file_lock() -> &'static Mutex<()> {
     FILE_LOCK.get_or_init(|| Mutex::new(()))
 }
 
-pub async fn load_all_standings<P: AsRef<Path>>(path: P) -> Result<HashMap<String, SyndicateState>, AppError> {
+pub async fn load_all_standings<P: AsRef<Path>>(
+    path: P,
+) -> Result<HashMap<String, SyndicateState>, AppError> {
     let _lock = get_file_lock().lock().await;
     let factions = vec![
         "steel_meridian",
@@ -35,7 +37,8 @@ pub async fn load_all_standings<P: AsRef<Path>>(path: P) -> Result<HashMap<Strin
         Err(_) => return Ok(HashMap::new()),
     };
 
-    let raw: HashMap<String, serde_json::Value> = serde_json::from_str(&content).unwrap_or_else(|_| HashMap::new());
+    let raw: HashMap<String, serde_json::Value> =
+        serde_json::from_str(&content).unwrap_or_else(|_| HashMap::new());
 
     let mut states = HashMap::new();
     for f in factions {
@@ -52,7 +55,10 @@ pub async fn load_all_standings<P: AsRef<Path>>(path: P) -> Result<HashMap<Strin
     Ok(states)
 }
 
-pub async fn save_all_standings<P: AsRef<Path>>(path: P, states: &HashMap<String, SyndicateState>) -> Result<(), AppError> {
+pub async fn save_all_standings<P: AsRef<Path>>(
+    path: P,
+    states: &HashMap<String, SyndicateState>,
+) -> Result<(), AppError> {
     let _lock = get_file_lock().lock().await;
     let mut raw = serde_json::Map::new();
     for (k, v) in states {

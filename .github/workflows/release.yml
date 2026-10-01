@@ -1,10 +1,9 @@
 name: Release
 
-# Releases are cut by semantic-release from conventional commits on main:
-# release (version bump + tag + draft release) -> build -> publish.
+# Releases are cut by semantic-release from conventional commits on main. Called by ci.yml
+# after the CI gate passes: release (version bump + tag + draft release) -> build -> publish.
 on:
-  push:
-    branches: [main]
+  workflow_call:
 
 permissions:
   contents: write
@@ -16,16 +15,17 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       version: ${{ steps.release.outputs.version }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: lts/*
 
@@ -42,17 +42,18 @@ jobs:
     needs: release
     if: needs.release.outputs.version != ''
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: v${{ needs.release.outputs.version }}
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -75,6 +76,7 @@ jobs:
   build:
     needs: [release, prepare]
     runs-on: ${{ matrix.platform }}
+    timeout-minutes: 60
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       RUSTC_WRAPPER: sccache
@@ -90,7 +92,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: v${{ needs.release.outputs.version }}
           fetch-depth: 0
@@ -104,7 +106,7 @@ jobs:
           version: 1.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: "npm"
@@ -143,6 +145,7 @@ jobs:
   publish:
     needs: [release, build]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Publish draft release
         env:
