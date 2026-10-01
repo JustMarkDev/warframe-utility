@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
         with:
-          node-version: 22
+          node-version: node
           cache: npm
       - run: npm ci --prefer-offline --no-audit
       - run: npm run build
@@ -45,7 +45,7 @@ jobs:
       run:
         working-directory: src-tauri
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@main
 
       # Tauri on Linux needs the webview and tray libraries.
       - name: Install system dependencies
@@ -57,7 +57,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - uses: swatinem/rust-cache@v2
+      - uses: swatinem/rust-cache@master
         with:
           workspaces: src-tauri
       - name: Check Rust formatting
