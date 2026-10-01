@@ -79,3 +79,13 @@ jobs:
           FRONTEND: ${{ needs.frontend.result }}
           RUST: ${{ needs.rust.result }}
         run: test "$FRONTEND" = success && test "$RUST" = success
+
+  release:
+    name: Release
+    needs: ci
+    # always(): a skipped ancestor job would otherwise skip this job.
+    if: always() && github.event_name == 'push' && needs.ci.result == 'success'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release.yml
+    secrets: inherit
