@@ -112,12 +112,11 @@ impl MarketClient {
         let resp = self.client.get(&url).send().await?;
         if resp.status().is_success() {
             let data: Value = resp.json().await?;
-            if let Some(sell_orders) = data["data"]["sell"].as_array() {
-                if let Some(first_order) = sell_orders.first() {
-                    if let Some(plat) = first_order["platinum"].as_i64() {
-                        return Ok(Some(plat as i32));
-                    }
-                }
+            if let Some(sell_orders) = data["data"]["sell"].as_array()
+                && let Some(first_order) = sell_orders.first()
+                && let Some(plat) = first_order["platinum"].as_i64()
+            {
+                return Ok(Some(plat as i32));
             }
             Ok(None)
         } else if is_auth_status(resp.status()) {

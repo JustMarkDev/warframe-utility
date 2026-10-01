@@ -56,9 +56,7 @@ function App() {
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Publish tracking
-  const [publishingFactions, setPublishingFactions] = useState<Set<string>>(
-    new Set(),
-  );
+  const [publishingFactions, setPublishingFactions] = useState<Set<string>>(new Set());
 
   // Publish preview modal state
   const [publishPreview, setPublishPreview] = useState<{
@@ -89,9 +87,7 @@ function App() {
 
   // Mod catalog preview states
   const [factionMods, setFactionMods] = useState<Record<string, string[]>>({});
-  const [expandedFactions, setExpandedFactions] = useState<Set<string>>(
-    new Set(),
-  );
+  const [expandedFactions, setExpandedFactions] = useState<Set<string>>(new Set());
 
   const fetchModsForFaction = async (factionKey: string, rank: number) => {
     try {
@@ -117,10 +113,7 @@ function App() {
     });
   };
 
-  const addLog = (
-    message: string,
-    type: "success" | "error" | "info" = "info",
-  ) => {
+  const addLog = (message: string, type: "success" | "error" | "info" = "info") => {
     const timestamp = new Date().toLocaleTimeString();
     setLogs((prev) => [{ timestamp, message, type }, ...prev].slice(0, 50));
   };
@@ -183,10 +176,7 @@ function App() {
 
       addLog("Successfully synced standing ledgers with disk data.", "success");
       if (data.authenticated && data.account_name) {
-        addLog(
-          `Authenticated with Warframe Market as: ${data.account_name}`,
-          "info",
-        );
+        addLog(`Authenticated with Warframe Market as: ${data.account_name}`, "info");
       }
     } catch (e: any) {
       addLog(`Failed to load system data: ${JSON.stringify(e)}`, "error");
@@ -204,10 +194,7 @@ function App() {
         const update = await check();
         if (update) {
           console.log(`[Updater] New update available: v${update.version}`);
-          addLog(
-            `Auto-update: A new version v${update.version} is available.`,
-            "info",
-          );
+          addLog(`Auto-update: A new version v${update.version} is available.`, "info");
           setAvailableUpdate(update);
         } else {
           console.log("[Updater] No update available. App is up to date.");
@@ -239,7 +226,7 @@ function App() {
 
     // Register event listener for automated browser authentication before init,
     // because init may automatically open the login window for an expired token.
-    listen<string>("auth_success", async (event) => {
+    void listen<string>("auth_success", async (event) => {
       const retry = pendingAuthRetry.current;
       pendingAuthRetry.current = null;
       authRefreshInProgress.current = false;
@@ -247,16 +234,10 @@ function App() {
       setAccountName(event.payload);
       setAuthLoading(false);
       setAuthError(null);
-      addLog(
-        `Authentication successful. Welcome back, Tenno ${event.payload}!`,
-        "success",
-      );
+      addLog(`Authentication successful. Welcome back, Tenno ${event.payload}!`, "success");
       await loadData();
       if (retry) {
-        addLog(
-          "Session refreshed. Resuming interrupted market action...",
-          "info",
-        );
+        addLog("Session refreshed. Resuming interrupted market action...", "info");
         await retry();
       }
     }).then((fn) => {
@@ -325,13 +306,8 @@ function App() {
 
   const handleRankChange = async (factionKey: string, rank: number) => {
     // Immediate reactive local update
-    setStandings((prev) =>
-      prev.map((s) => (s.faction_key === factionKey ? { ...s, rank } : s)),
-    );
-    addLog(
-      `Faction rank updated: ${formatFactionName(factionKey)} to Rank ${rank}.`,
-      "info",
-    );
+    setStandings((prev) => prev.map((s) => (s.faction_key === factionKey ? { ...s, rank } : s)));
+    addLog(`Faction rank updated: ${formatFactionName(factionKey)} to Rank ${rank}.`, "info");
 
     // Fetch updated list of mods matching the new rank level
     await fetchModsForFaction(factionKey, rank);
@@ -339,19 +315,13 @@ function App() {
     try {
       const updated: SyndicateState = await invoke("update_standing", {
         factionKey,
-        standing:
-          standings.find((s) => s.faction_key === factionKey)?.standing || 0,
+        standing: standings.find((s) => s.faction_key === factionKey)?.standing || 0,
         rank,
       });
       // Sync corrected standing capacity if adjusted
-      setStandings((prev) =>
-        prev.map((s) => (s.faction_key === factionKey ? updated : s)),
-      );
+      setStandings((prev) => prev.map((s) => (s.faction_key === factionKey ? updated : s)));
     } catch (e: any) {
-      addLog(
-        `Failed to update rank for ${factionKey}: ${JSON.stringify(e)}`,
-        "error",
-      );
+      addLog(`Failed to update rank for ${factionKey}: ${JSON.stringify(e)}`, "error");
     }
   };
 
@@ -362,10 +332,7 @@ function App() {
       next.add(factionKey);
       return next;
     });
-    addLog(
-      `Publishing active sell orders for ${formatFactionName(factionKey)}...`,
-      "info",
-    );
+    addLog(`Publishing active sell orders for ${formatFactionName(factionKey)}...`, "info");
 
     try {
       const mods: string[] = await invoke("publish_syndicate", { factionKey });
@@ -378,10 +345,7 @@ function App() {
         await handleAuthExpired(e, () => handlePublish(factionKey));
       } else {
         const errStr = getErrorMessage(e);
-        addLog(
-          `Publish failed for ${formatFactionName(factionKey)}: ${errStr}`,
-          "error",
-        );
+        addLog(`Publish failed for ${formatFactionName(factionKey)}: ${errStr}`, "error");
       }
     } finally {
       setPublishingFactions((prev) => {
@@ -422,10 +386,7 @@ function App() {
           quantity: saleQty,
         });
       } else if (e.type === "InsufficientStanding") {
-        addLog(
-          `Insufficient standing: Cannot deduct standing for '${saleItem}'.`,
-          "error",
-        );
+        addLog(`Insufficient standing: Cannot deduct standing for '${saleItem}'.`, "error");
       } else if (isAuthExpiredError(e)) {
         await handleAuthExpired(e);
         addLog("After signing in, please retry logging the sale.", "info");
@@ -496,18 +457,13 @@ function App() {
     return (
       <div className="auth-wrapper">
         <div className="auth-card">
-          <svg
-            className="auth-icon"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg className="auth-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
           </svg>
           <h2>Tenno Verification</h2>
           <p>
-            Authenticate safely with your <code>warframe.market</code> account.
-            Logging in via our secure In-App Browser supports Steam, Discord,
-            Xbox, PSN, and Email.
+            Authenticate safely with your <code>warframe.market</code> account. Logging in via our
+            secure In-App Browser supports Steam, Discord, Xbox, PSN, and Email.
           </p>
 
           <div
@@ -536,8 +492,8 @@ function App() {
                     opacity: 0.8,
                   }}
                 >
-                  Please complete the login in the pop-up window. Once logged
-                  in, it will close automatically.
+                  Please complete the login in the pop-up window. Once logged in, it will close
+                  automatically.
                 </p>
                 <button
                   type="button"
@@ -579,8 +535,7 @@ function App() {
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             <span className="update-banner-text">
-              New version <strong>v{availableUpdate.version}</strong> is
-              available.
+              New version <strong>v{availableUpdate.version}</strong> is available.
             </span>
           </div>
           <button
@@ -633,12 +588,8 @@ function App() {
               {/* Card Header */}
               <div className="card-header">
                 <div className="faction-title-group">
-                  <h3 className="faction-name">
-                    {formatFactionName(state.faction_key)}
-                  </h3>
-                  <span className="faction-max-info">
-                    CAPACITY: {maxCap.toLocaleString()}
-                  </span>
+                  <h3 className="faction-name">{formatFactionName(state.faction_key)}</h3>
+                  <span className="faction-max-info">CAPACITY: {maxCap.toLocaleString()}</span>
                 </div>
 
                 <div className="rank-badge-group">
@@ -646,12 +597,7 @@ function App() {
                   <select
                     className="rank-select"
                     value={state.rank}
-                    onChange={(e) =>
-                      handleRankChange(
-                        state.faction_key,
-                        parseInt(e.target.value),
-                      )
-                    }
+                    onChange={(e) => handleRankChange(state.faction_key, parseInt(e.target.value))}
                   >
                     {[0, 1, 2, 3, 4, 5].map((r) => (
                       <option key={r} value={r}>
@@ -665,12 +611,9 @@ function App() {
               {/* Slider Controller */}
               <div className="slider-container">
                 <div className="slider-labels">
-                  <span style={{ color: "var(--text-secondary)" }}>
-                    STANDING
-                  </span>
+                  <span style={{ color: "var(--text-secondary)" }}>STANDING</span>
                   <span className="standing-value">
-                    {state.standing.toLocaleString()} /{" "}
-                    {maxCap.toLocaleString()}
+                    {state.standing.toLocaleString()} / {maxCap.toLocaleString()}
                   </span>
                 </div>
                 <input
@@ -680,10 +623,7 @@ function App() {
                   max={maxCap}
                   value={state.standing}
                   onChange={(e) =>
-                    handleStandingChange(
-                      state.faction_key,
-                      parseInt(e.target.value),
-                    )
+                    handleStandingChange(state.faction_key, parseInt(e.target.value))
                   }
                 />
               </div>
@@ -691,9 +631,7 @@ function App() {
               {/* Listable count info */}
               <div className="offerings-info">
                 <span className="offerings-label">LISTABLE OFFERINGS</span>
-                <span className="offerings-count">
-                  {listQty > 0 ? listQty : 0}
-                </span>
+                <span className="offerings-count">{listQty > 0 ? listQty : 0}</span>
               </div>
 
               {/* Mod catalog preview */}
@@ -714,9 +652,7 @@ function App() {
                     {isExpanded && (
                       <div className="mods-list-drawer">
                         {modsList.length === 0 ? (
-                          <span className="no-mods-msg">
-                            No mods available at this rank level.
-                          </span>
+                          <span className="no-mods-msg">No mods available at this rank level.</span>
                         ) : (
                           modsList.map((m) => (
                             <span key={m} className="mod-pill">
@@ -798,9 +734,7 @@ function App() {
               min="1"
               max="10"
               value={saleQty}
-              onChange={(e) =>
-                setSaleQty(Math.max(1, parseInt(e.target.value) || 1))
-              }
+              onChange={(e) => setSaleQty(Math.max(1, parseInt(e.target.value) || 1))}
             />
           </div>
 
@@ -821,9 +755,7 @@ function App() {
           {logs.length === 0 ? (
             <div className="log-entry" style={{ color: "#475569" }}>
               <span>[SYSTEM LOGS]</span>
-              <span>
-                No transactions executed in this session. Awaiting operations...
-              </span>
+              <span>No transactions executed in this session. Awaiting operations...</span>
             </div>
           ) : (
             logs.map((log, idx) => (
@@ -861,15 +793,11 @@ function App() {
                 <div className="publish-preview-info">
                   <div className="publish-stat-box">
                     <span className="stat-label">Quantity per Mod</span>
-                    <span className="stat-value">
-                      {publishPreview.quantity}
-                    </span>
+                    <span className="stat-value">{publishPreview.quantity}</span>
                   </div>
                   <div className="publish-stat-box">
                     <span className="stat-label">Total Mods to Publish</span>
-                    <span className="stat-value">
-                      {publishPreview.mods.length}
-                    </span>
+                    <span className="stat-value">{publishPreview.mods.length}</span>
                   </div>
                 </div>
               ) : (
@@ -878,9 +806,7 @@ function App() {
                     Your standing is{" "}
                     <strong>
                       {standings
-                        .find(
-                          (s) => s.faction_key === publishPreview.factionKey,
-                        )
+                        .find((s) => s.faction_key === publishPreview.factionKey)
                         ?.standing.toLocaleString()}
                     </strong>
                     , which is below the 25,000 threshold.
@@ -890,9 +816,8 @@ function App() {
 
               {publishPreview.quantity > 0 ? (
                 <p style={{ marginTop: "16px", marginBottom: "8px" }}>
-                  The following <strong>{publishPreview.mods.length}</strong>{" "}
-                  mods will be posted or updated at the lowest active market
-                  price (undercut by 1 Platinum):
+                  The following <strong>{publishPreview.mods.length}</strong> mods will be posted or
+                  updated at the lowest active market price (undercut by 1 Platinum):
                 </p>
               ) : (
                 <p
@@ -910,9 +835,7 @@ function App() {
 
               <div className="preview-mods-list">
                 {publishPreview.mods.length === 0 ? (
-                  <span className="no-mods-msg">
-                    No mods available at this rank level.
-                  </span>
+                  <span className="no-mods-msg">No mods available at this rank level.</span>
                 ) : (
                   publishPreview.mods.map((m) => (
                     <span key={m} className="mod-pill-preview">
@@ -924,27 +847,19 @@ function App() {
 
               {publishPreview.quantity > 0 && (
                 <div className="preview-disclaimer">
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="16"
-                    height="16"
-                    fill="var(--color-gold)"
-                  >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="var(--color-gold)">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                   </svg>
                   <span>
-                    Prices are queried live from warframe.market. Standing is
-                    only deducted when you record a sale.
+                    Prices are queried live from warframe.market. Standing is only deducted when you
+                    record a sale.
                   </span>
                 </div>
               )}
             </div>
 
             <div className="modal-footer" style={{ gap: "12px" }}>
-              <button
-                className="btn-secondary"
-                onClick={() => setPublishPreview(null)}
-              >
+              <button className="btn-secondary" onClick={() => setPublishPreview(null)}>
                 Cancel
               </button>
               <button
@@ -968,9 +883,7 @@ function App() {
                 }}
                 onClick={() => handlePublish(publishPreview.factionKey)}
               >
-                {publishPreview.quantity > 0
-                  ? "Confirm & Publish"
-                  : "Confirm Deletion"}
+                {publishPreview.quantity > 0 ? "Confirm & Publish" : "Confirm Deletion"}
               </button>
             </div>
           </div>
@@ -987,14 +900,11 @@ function App() {
 
             <div className="modal-body">
               <p>
-                The offering item{" "}
-                <strong>{overlapData.itemSlug.replace(/_/g, " ")}</strong> is
-                shared across multiple represented factions that meet the
-                standing requirement.
+                The offering item <strong>{overlapData.itemSlug.replace(/_/g, " ")}</strong> is
+                shared across multiple represented factions that meet the standing requirement.
               </p>
               <p style={{ marginTop: "8px" }}>
-                Select which Syndicate's standing should be deducted for this
-                transaction:
+                Select which Syndicate's standing should be deducted for this transaction:
               </p>
 
               <div className="overlap-grid">
@@ -1016,10 +926,7 @@ function App() {
             </div>
 
             <div className="modal-footer">
-              <button
-                className="btn-secondary"
-                onClick={() => setOverlapData(null)}
-              >
+              <button className="btn-secondary" onClick={() => setOverlapData(null)}>
                 Cancel Transaction
               </button>
             </div>

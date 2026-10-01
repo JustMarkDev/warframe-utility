@@ -1,8 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const API_URL =
-  "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json";
+const API_URL = "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json";
 
 // Mapping of Syndicate names from API to our internal keys
 const SYNDICATES = {
@@ -73,10 +72,7 @@ async function main() {
         if (factionKey && rankNum) {
           // Normalize slug to match warframe.market item slugs:
           // Lowercase, spaces replaced by underscores, remove single quotes, dashes to underscores.
-          let slug = item.name
-            .toLowerCase()
-            .replace(/[']/g, "")
-            .replace(/[\s-]/g, "_");
+          let slug = item.name.toLowerCase().replace(/[']/g, "").replace(/[\s-]/g, "_");
 
           syndicateMap[factionKey][rankNum].add(slug);
           allSlugsSet.add(slug);
@@ -84,10 +80,8 @@ async function main() {
       }
     }
 
-    const allSlugs = Array.from(allSlugsSet).sort();
-    console.log(
-      `Found ${allSlugs.length} unique Syndicate augment/weapon mods!`,
-    );
+    const allSlugs = Array.from(allSlugsSet).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    console.log(`Found ${allSlugs.length} unique Syndicate augment/weapon mods!`);
 
     // 1. Generate domain.rs contents
     await generateRustDomain(syndicateMap);
@@ -205,10 +199,12 @@ pub fn get_syndicate_mods_at_rank(faction: &str, rank: i32) -> Vec<&'static str>
 `;
 
   // Sort factions for deterministic outputs
-  const factionsList = Object.keys(syndicateMap).sort();
+  const factionsList = Object.keys(syndicateMap).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   for (const faction of factionsList) {
     for (const rank of [4, 5]) {
-      const items = Array.from(syndicateMap[faction][rank]).sort();
+      const items = Array.from(syndicateMap[faction][rank]).sort((a, b) =>
+        a < b ? -1 : a > b ? 1 : 0,
+      );
       if (items.length === 0) continue;
 
       code += `        ("${faction}", ${rank}) => vec![
@@ -288,4 +284,4 @@ mod tests {
   await fs.promises.writeFile(domainPath, code, "utf-8");
 }
 
-main();
+void main();

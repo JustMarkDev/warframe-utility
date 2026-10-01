@@ -1,10 +1,10 @@
 # Warframe Market Syndicate Automator
 
 <div align="center">
-  
-  [![Tauri v2](https://img.shields.io/badge/Tauri-v2-FFC107?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app/)
-  [![Rust](https://img.shields.io/badge/Rust-Backend-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
-  [![React & TS](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+
+[![Tauri v2](https://img.shields.io/badge/Tauri-v2-FFC107?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app/)
+[![Rust](https://img.shields.io/badge/Rust-Backend-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![React & TS](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 </div>
 
 > [!WARNING]
@@ -16,22 +16,24 @@ A lightweight, ultra-performance native desktop application engineered for **War
 
 ## ✨ Features & Capabilities
 
-*   ** Secure In-App Authentication**: Integrates an embedded secure login flow using Tauri's native `cookies` API. It automatically extracts the `JWT` cookie upon signing in at `warframe.market`.
-*   ** Interactive Standing Ledger**: Synchronize and adjust faction standing in real-time with responsive sliders. Max standing caps are dynamically recalculated based on your represented faction rank dropdown.
-*   ** Smart Offering Publisher**: Automatically queries the lowest active competitor prices from `warframe.market` for your represented faction's mods, undercuts the competition by `1 Platinum`, and registers/updates live sell listings. Deletes listings instantly if standing falls to zero.
-*   ** Cross-Faction Conflict Resolver**: When logging a sale for an offering represented by multiple active syndicates, a frosted-glass overlay modal prompts you to select the attributing syndicate. Standing values are automatically updated on-disk and active market listings cascade-synced!
-*   ** Local Persistence**: Standings, rank levels, configuration options, and encrypted session keys are preserved locally on-disk.
-*   ** Integrated Auto-Updater**: Periodically checks for updates and renders an elegant, non-intrusive banner to download, install, and relaunch the application in one click.
+- ** Secure In-App Authentication**: Integrates an embedded secure login flow using Tauri's native `cookies` API. It automatically extracts the `JWT` cookie upon signing in at `warframe.market`.
+- ** Interactive Standing Ledger**: Synchronize and adjust faction standing in real-time with responsive sliders. Max standing caps are dynamically recalculated based on your represented faction rank dropdown.
+- ** Smart Offering Publisher**: Automatically queries the lowest active competitor prices from `warframe.market` for your represented faction's mods, undercuts the competition by `1 Platinum`, and registers/updates live sell listings. Deletes listings instantly if standing falls to zero.
+- ** Cross-Faction Conflict Resolver**: When logging a sale for an offering represented by multiple active syndicates, a frosted-glass overlay modal prompts you to select the attributing syndicate. Standing values are automatically updated on-disk and active market listings cascade-synced!
+- ** Local Persistence**: Standings, rank levels, configuration options, and encrypted session keys are preserved locally on-disk.
+- ** Integrated Auto-Updater**: Periodically checks for updates and renders an elegant, non-intrusive banner to download, install, and relaunch the application in one click.
 
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
 ### Frontend
+
 - **Framework**: Vite + React 19 (TypeScript)
 - **Styling**: Vanilla CSS custom glassmorphism (frosted backgrounds, backdrop-filters, custom-scoped variables, interactive CSS transitions, and responsive grid layouts)
 
 ### Backend
+
 - **Core**: Tauri v2 in Rust
 - **APIs & State**: Safe thread-local disk persistence, native cookie store monitoring, Tokio background tasks, and asynchronous HTTP client routines powered by `reqwest`.
 
@@ -40,22 +42,25 @@ A lightweight, ultra-performance native desktop application engineered for **War
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
+
 Ensure you have the following installed on your machine:
-*   [Node.js](https://nodejs.org/) (v18+)
-*   [Rust & Cargo Compiler](https://www.rust-lang.org/tools/install) (v1.75+)
+
+- [Node.js](https://nodejs.org/) (v18+)
+- [Rust & Cargo Compiler](https://www.rust-lang.org/tools/install) (v1.75+)
 
 ### 2. Developer Commands
+
 Open your terminal in the root project directory and execute:
 
 ```bash
-# Install npm dependencies
-npm install
+# Install dependencies
+bun install
 
 # Run the Tauri application in hot-reloading development mode
-npm run tauri dev
+bun run tauri dev
 
 # Clean and bundle the frontend assets only (useful for visual adjustments)
-npm run dev
+bun run dev
 ```
 
 ---
@@ -76,4 +81,4 @@ npm run dev
 - [ ] **Advanced Profit & Sales Analytics:** A dashboard view showing historical sales logs, total Platinum earned, and standing-to-platinum efficiency metrics per syndicate.
 - [ ] **Multi-Profile Support:** Capability to manage and switch between multiple `warframe.market` user accounts or game platform profiles (PC, PlayStation, Xbox, Switch).
 - [ ] **Intelligent Offering Planner:** Recommend the most optimal mods/offerings to sell based on current daily market demand and standing conversion efficiency.
-- [X] **Automatic Session Token Refresh:** Detection of expired JWT tokens and seamless automated re-authentication via the in-app login window.
+- [x] **Automatic Session Token Refresh:** Detection of expired JWT tokens and seamless automated re-authentication via the in-app login window.

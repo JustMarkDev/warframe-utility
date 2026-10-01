@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap");
 
 :root {
-  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'Share Tech Mono', monospace;
+  --font-sans: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Share Tech Mono", monospace;
 
   /* Premium Tenno Theme Color Tokens (Gold & Cosmic Dark) */
   --bg-app: radial-gradient(circle at 50% 50%, #0d121f 0%, #04060b 100%);
@@ -18,7 +18,7 @@
   --color-success: #10b981;
   --color-danger: #ef4444;
   --color-info: #3b82f6;
-  
+
   /* Glassmorphic values */
   --glass-blur: blur(16px);
   --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
@@ -185,7 +185,9 @@ body {
   flex-direction: column;
   gap: 24px;
   text-align: center;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .auth-card:hover {
@@ -315,7 +317,7 @@ body {
 
 /* Faction Glow Lines */
 .syndicate-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -330,7 +332,9 @@ body {
   transform: translateY(-3px);
   background: var(--bg-card-hover);
   border-color: var(--border-card-hover);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(199, 155, 61, 0.05);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.7),
+    0 0 20px rgba(199, 155, 61, 0.05);
 }
 
 /* Card Header */
@@ -555,7 +559,8 @@ body {
   letter-spacing: 0.5px;
 }
 
-.form-select, .form-number-input {
+.form-select,
+.form-number-input {
   width: 100%;
   padding: 12px;
   background: rgba(0, 0, 0, 0.4);
@@ -567,7 +572,8 @@ body {
   transition: all 0.3s ease;
 }
 
-.form-select:focus, .form-number-input:focus {
+.form-select:focus,
+.form-number-input:focus {
   border-color: var(--color-gold);
   box-shadow: 0 0 8px rgba(199, 155, 61, 0.1);
 }
@@ -634,8 +640,14 @@ body {
 }
 
 @keyframes modalScale {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .modal-header h3 {
@@ -676,7 +688,9 @@ body {
 .btn-faction-choice:hover {
   background: rgba(255, 255, 255, 0.05);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 12px var(--faction-glow);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.5),
+    0 0 12px var(--faction-glow);
 }
 
 .btn-faction-choice span {
@@ -750,9 +764,15 @@ body {
   color: #cbd5e1;
 }
 
-.log-msg.success { color: var(--color-success); }
-.log-msg.error { color: var(--color-danger); }
-.log-msg.info { color: var(--color-info); }
+.log-msg.success {
+  color: var(--color-success);
+}
+.log-msg.error {
+  color: var(--color-danger);
+}
+.log-msg.info {
+  color: var(--color-info);
+}
 
 /* Spin Animations */
 .spinner {
@@ -762,7 +782,9 @@ body {
 }
 
 @keyframes spin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -774,8 +796,6 @@ body {
     align-items: stretch;
   }
 }
-
-
 
 /* Expandable mod list drawer */
 .mods-preview-container {
@@ -852,7 +872,9 @@ body {
 /* Publish Confirmation Modal Custom Elements */
 .modal-content.publish-confirm {
   border: 1px solid var(--faction-glow);
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.4), 0 0 15px var(--faction-glow);
+  box-shadow:
+    0 0 35px rgba(0, 0, 0, 0.4),
+    0 0 15px var(--faction-glow);
   max-width: 580px;
 }
 
@@ -969,7 +991,9 @@ body {
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid rgba(199, 155, 61, 0.3);
   border-radius: 16px;
-  box-shadow: 0 0 15px rgba(199, 155, 61, 0.1), var(--glass-shadow);
+  box-shadow:
+    0 0 15px rgba(199, 155, 61, 0.1),
+    var(--glass-shadow);
   animation: fadeInDown 0.5s ease-out;
 }
 
@@ -1034,7 +1058,11 @@ body {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
   40% {
@@ -1044,7 +1072,3 @@ body {
     transform: translateY(-2px);
   }
 }
-
-
-
-

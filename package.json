@@ -1,28 +1,41 @@
 {
   "name": "warframe-utility",
-  "private": true,
   "version": "0.4.7",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "vp dev",
+    "preview": "vp preview",
     "tauri": "tauri",
-    "update-mods": "node scripts/update-mods.js"
+    "update-mods": "bun scripts/update-mods.js",
+    "build": "vp build",
+    "check": "bun run check:js && bun run check:rust",
+    "check:js": "vp check",
+    "check:rust": "cargo fmt --manifest-path src-tauri/Cargo.toml --check && bun run lint:rust",
+    "lint": "vp lint && bun run lint:rust",
+    "lint:rust": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings",
+    "format": "vp fmt && bun run format:rust",
+    "format:rust": "cargo fmt --manifest-path src-tauri/Cargo.toml",
+    "test": "bun run test:js && bun run test:rust",
+    "test:js": "vp test run --passWithNoTests",
+    "test:rust": "cargo nextest run --manifest-path src-tauri/Cargo.toml --locked"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-process": "^2",
-    "@tauri-apps/plugin-updater": "^2",
+    "@tauri-apps/api": "^2.12.1",
+    "@tauri-apps/plugin-process": "^2.4.0",
+    "@tauri-apps/plugin-updater": "^2.13.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2",
+    "@tauri-apps/cli": "^2.12.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
     "typescript": "~7.0.2",
-    "vite": "^8.3.1"
+    "vite-plus": "^1.0.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0"
   }
 }

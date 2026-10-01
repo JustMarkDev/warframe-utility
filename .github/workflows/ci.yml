@@ -15,18 +15,19 @@ concurrency:
 
 jobs:
   frontend:
-    name: Frontend build
+    name: Frontend
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@main
-      - uses: actions/setup-node@main
+      - uses: oven-sh/setup-bun@main
         with:
-          node-version: node
-          cache: npm
-      - run: npm ci --prefer-offline --no-audit
-      - run: npm run build
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run check:js
+      - run: bun run test:js
+      - run: bun run build
 
   rust:
     name: Rust (${{ matrix.name }})
@@ -41,9 +42,6 @@ jobs:
             os: ubuntu-22.04
           - name: Windows
             os: windows-latest
-    defaults:
-      run:
-        working-directory: src-tauri
     steps:
       - uses: actions/checkout@main
 
@@ -60,12 +58,16 @@ jobs:
       - uses: swatinem/rust-cache@master
         with:
           workspaces: src-tauri
-      - name: Check Rust formatting
-        run: cargo fmt -- --check
-      - name: Lint Rust
-        run: cargo clippy --all-targets -- -D warnings
+      - uses: taiki-e/install-action@main
+        with:
+          tool: cargo-nextest
+      - uses: oven-sh/setup-bun@main
+        with:
+          bun-version: latest
+      - name: Check Rust formatting and lints
+        run: bun run check:rust
       - name: Test Rust
-        run: cargo test
+        run: bun run test:rust
 
   ci:
     name: CI

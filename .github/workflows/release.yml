@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: lts/*
 
-      # Bumps package.json, package-lock.json, tauri.conf.json, Cargo.toml and Cargo.lock,
+      # Bumps package.json, tauri.conf.json, Cargo.toml and Cargo.lock,
       # commits, tags, and creates a draft release. `version` stays empty when nothing is due.
       - name: Run semantic-release
         id: release
@@ -52,13 +52,13 @@ jobs:
           ref: v${{ needs.release.outputs.version }}
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@main
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@main
         with:
-          node-version: node
+          bun-version: latest
 
       - name: Regenerate catalog
-        run: npm run update-mods
+        run: bun run update-mods
 
       - name: Commit regenerated catalog
         run: |
@@ -105,14 +105,13 @@ jobs:
           packages: libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
           version: 1.0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@main
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@main
         with:
-          node-version: node
-          cache: "npm"
+          bun-version: latest
 
       - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit
+        run: bun install --frozen-lockfile
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable

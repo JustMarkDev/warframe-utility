@@ -1,4 +1,4 @@
-use crate::domain::{get_syndicate_cost, get_syndicate_mods, AppError, SyndicateState};
+use crate::domain::{AppError, SyndicateState, get_syndicate_cost, get_syndicate_mods};
 use crate::market::MarketClient;
 use crate::persistence::{load_all_standings, load_jwt, save_all_standings, save_jwt};
 use serde::Serialize;
@@ -174,22 +174,27 @@ pub async fn start_in_app_login(app_handle: tauri::AppHandle) -> Result<(), AppE
                         );
                     }
 
-                    if let Some(token) = found_token {
-                        if token != last_attempted_token {
-                            last_attempted_token = token.clone();
-                            println!("[WFU-Auth] Success! New JWT cookie captured via native cookies() API. Validating...");
+                    if let Some(token) = found_token
+                        && token != last_attempted_token
+                    {
+                        last_attempted_token = token.clone();
+                        println!(
+                            "[WFU-Auth] Success! New JWT cookie captured via native cookies() API. Validating..."
+                        );
 
-                            // Call capture_market_jwt to validate, save, close window, and emit auth_success
-                            match capture_market_jwt(app_handle_clone.clone(), token).await {
-                                Ok(slug) => {
-                                    println!("[WFU-Auth] Login complete! Account: {}", slug);
-                                    break;
-                                }
-                                Err(e) => {
-                                    eprintln!("[WFU-Auth] Error during validation/capture for this token: {:?}", e);
-                                    // Do NOT break the loop! A temporary, placeholder, or old expired token
-                                    // shouldn't kill the poller. We continue waiting for a new/valid token.
-                                }
+                        // Call capture_market_jwt to validate, save, close window, and emit auth_success
+                        match capture_market_jwt(app_handle_clone.clone(), token).await {
+                            Ok(slug) => {
+                                println!("[WFU-Auth] Login complete! Account: {}", slug);
+                                break;
+                            }
+                            Err(e) => {
+                                eprintln!(
+                                    "[WFU-Auth] Error during validation/capture for this token: {:?}",
+                                    e
+                                );
+                                // Do NOT break the loop! A temporary, placeholder, or old expired token
+                                // shouldn't kill the poller. We continue waiting for a new/valid token.
                             }
                         }
                     }
@@ -253,9 +258,14 @@ pub async fn logout(app_handle: tauri::AppHandle) -> Result<(), AppError> {
     //    so the next spawned login window is 100% clean and won't auto-authenticate.
     if let Some(window) = app_handle.get_webview_window("main") {
         match window.clear_all_browsing_data() {
-            Ok(_) => println!("[WFU-Auth] Successfully cleared all WebView browsing data, cookies, and local storage! Next login will be clean."),
+            Ok(_) => println!(
+                "[WFU-Auth] Successfully cleared all WebView browsing data, cookies, and local storage! Next login will be clean."
+            ),
             Err(e) => {
-                eprintln!("[WFU-Auth] Failed to clear WebView browsing data: {}. Falling back to manual cookie deletion...", e);
+                eprintln!(
+                    "[WFU-Auth] Failed to clear WebView browsing data: {}. Falling back to manual cookie deletion...",
+                    e
+                );
 
                 // Fallback: Delete all cookies for warframe.market manually
                 let target_url_str = "https://warframe.market";
