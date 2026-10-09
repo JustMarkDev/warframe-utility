@@ -33,3 +33,4 @@ temp-vite/
 *.njsproj
 *.sln
 *.sw?
+.vitest/

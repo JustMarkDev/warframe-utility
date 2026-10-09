@@ -18,7 +18,8 @@
     "format:rust": "cargo fmt --manifest-path src-tauri/Cargo.toml",
     "test": "bun run test:js && bun run test:rust",
     "test:js": "vp test run --passWithNoTests",
-    "test:rust": "cargo nextest run --manifest-path src-tauri/Cargo.toml --locked"
+    "test:rust": "cargo nextest run --manifest-path src-tauri/Cargo.toml --locked",
+    "prepare": "vp config"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.1",
@@ -33,9 +34,17 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
     "typescript": "~7.0.2",
-    "vite-plus": "^1.0.0"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+    "vite-plus": "1.1.0"
   },
   "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.1.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "bun",
+      "version": "1.4.2",
+      "onFail": "download"
+    }
   }
 }
