@@ -20,12 +20,12 @@ jobs:
       version: ${{ steps.release.outputs.version }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@main
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: lts/*
 
@@ -37,7 +37,7 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx --force -y -p semantic-release@latest -p @semantic-release/exec@latest -p @semantic-release/git@latest semantic-release
+        run: npx --force -y -p semantic-release@25.0.9 -p @semantic-release/exec@7.1.0 -p @semantic-release/git@11.0.1 semantic-release
 
   # JOB 1: Regenerate the database once and push it back to GitHub to avoid conflicts
   prepare:
@@ -49,15 +49,15 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: v${{ needs.release.outputs.version }}
           fetch-depth: 0
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@main
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: latest
+          bun-version: 1.4.4
 
       - name: Regenerate catalog
         run: bun run update-mods
@@ -94,7 +94,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: v${{ needs.release.outputs.version }}
           fetch-depth: 0
@@ -102,27 +102,27 @@ jobs:
       # Linux requires additional system packages to build webview and app indicator libraries
       - name: Install system dependencies (Linux only)
         if: matrix.platform == 'ubuntu-22.04'
-        uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
         with:
           packages: libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
           version: 1.0
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@main
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: latest
+          bun-version: 1.4.4
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
 
       - name: Setup sccache
-        uses: mozilla-actions/sccache-action@main
+        uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba # v0.0.11
 
       - name: Rust Cache
-        uses: swatinem/rust-cache@master
+        uses: swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           workspaces: "./src-tauri -> target"
 
@@ -130,7 +130,7 @@ jobs:
         run: sccache --show-stats
 
       - name: Build and Package Tauri App
-        uses: tauri-apps/tauri-action@dev
+        uses: tauri-apps/tauri-action@a6e90ddc4ba4721f294e52b856d3d50e645edc07 # dev branch head; pinned so the signing key never meets a moving ref
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
