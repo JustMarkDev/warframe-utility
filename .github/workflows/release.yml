@@ -130,7 +130,7 @@ jobs:
         run: sccache --show-stats
 
       - name: Build and Package Tauri App
-        uses: tauri-apps/tauri-action@a6e90ddc4ba4721f294e52b856d3d50e645edc07 # dev branch head; pinned so the signing key never meets a moving ref
+        uses: tauri-apps/tauri-action@4092d6e7f198b7cb01ea63025c21e5c9159168c3 # dev branch head; pinned so the signing key never meets a moving ref
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
